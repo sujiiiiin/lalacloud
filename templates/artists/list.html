@@ -120,7 +120,7 @@
                 </div>
                 {% endif %}
                 <div class="position-absolute top-0 end-0 m-2">
-                    <span class="badge bg-danger">TOP {{ forloop.counter }}</span>
+                    <span class="badge bg-danger">TOP {{ artist.id }}</span>
                 </div>
             </div>
             <div class="card-body">
@@ -158,17 +158,36 @@
 </div>
 
 <!-- 分页控件 -->
+<!-- 分页控件 -->
 <nav class="mt-5">
     <ul class="pagination justify-content-center">
+        {% if artists.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ artists.previous_page_number }}" tabindex="-1">上一页</a>
+        </li>
+        {% else %}
         <li class="page-item disabled">
             <a class="page-link" href="#" tabindex="-1">上一页</a>
         </li>
-        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        {% endif %}
+        
+        {% for i in artists.paginator.page_range %}
+            {% if artists.number == i %}
+            <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+        
+        {% if artists.has_next %}
         <li class="page-item">
+            <a class="page-link" href="?page={{ artists.next_page_number }}">下一页</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
             <a class="page-link" href="#">下一页</a>
         </li>
+        {% endif %}
     </ul>
 </nav>
 

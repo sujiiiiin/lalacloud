@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 3rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .hero-section::after {
+        content: "";
+        position: absolute;
+        bottom: -30px;
+        left: -30px;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .stats-card {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- 英雄区域 -->
+<section class="hero-section">
+    <div class="row align-items-center">
+        <div class="col-md-7">
+            <h1 class="display-4 fw-bold">{{ page_title }}</h1>
+            <p class="lead">探索网易云音乐最受欢迎的{{ artist_count }}位歌手</p>
+            <p class="mb-4">发现你喜爱的音乐人，聆听他们的热门歌曲</p>
+            <a href="#" class="btn btn-light btn-lg me-2">浏览歌手</a>
+            <a href="#" class="btn btn-outline-light btn-lg">随机推荐</a>
+        </div>
+        <div class="col-md-5">
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="stats-card">
+                        <h3 class="display-5 fw-bold">{{ artist_count }}</h3>
+                        <p>热门歌手</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="stats-card">
+                        <h3 class="display-5 fw-bold">{{ artist_count|add:"00" }}</h3>
+                        <p>热门歌曲</p>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="stats-card mt-0">
+                        <h3 class="display-5 fw-bold">24/7</h3>
+                        <p>音乐不间断</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 筛选和搜索 -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-outline-primary active">全部</button>
+            <button class="btn btn-outline-primary">华语</button>
+            <button class="btn btn-outline-primary">欧美</button>
+            <button class="btn btn-outline-primary">日韩</button>
+            <button class="btn btn-outline-primary">乐队</button>
+        </div>
+    </div>
+    <div class="col-md-4 d-flex align-items-center justify-content-md-end">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="搜索歌手..." id="searchInput">
+            <button class="btn btn-primary" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 歌手列表 -->
+{% if artists %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="artistGrid">
+    {% for artist in artists %}
+    <div class="col">
+        <div class="card h-100 artist-card shadow-sm border-0">
+            <div class="card-img-container position-relative">
+                {% if artist.avatar_url %}
+                <img src="{{ artist.avatar_url }}" alt="{{ artist.name }}" class="card-img-top artist-avatar">
+                {% else %}
+                <div class="avatar-placeholder d-flex align-items-center justify-content-center">
+                    <i class="fas fa-user fa-3x"></i>
+                </div>
+                {% endif %}
+                <div class="position-absolute top-0 end-0 m-2">
+                    <span class="badge bg-danger">TOP {{ forloop.counter }}</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title fw-bold mb-1">{{ artist.name }}</h5>
+                
+                <div class="d-flex align-items-center mb-2">
+                    <span class="text-warning me-1">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </span>
+                    <small class="text-muted">5.0</small>
+                </div>
+                
+                {% if artist.description %}
+                <p class="card-text artist-description text-muted">
+                    {{ artist.description|truncatechars:80 }}
+                </p>
+                {% else %}
+                <p class="card-text text-muted">暂无简介</p>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+                <div class="d-grid">
+                    <a href="{% url 'artist_detail' artist.netease_id %}" class="btn btn-outline-primary">
+                        查看详情 <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 分页控件 -->
+<nav class="mt-5">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">上一页</a>
+        </li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">下一页</a>
+        </li>
+    </ul>
+</nav>
+
+{% else %}
+<div class="alert alert-warning text-center" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>当前没有歌手数据，请稍后再试。
+</div>
+{% endif %}
+
+<!-- 推荐部分 -->
+<section class="mt-5 pt-4 border-top">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">你可能还喜欢</h3>
+        <a href="#" class="btn btn-link">查看全部 <i class="fas fa-arrow-right"></i></a>
+    </div>
+    
+    <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3">
+        {% for artist in artists|slice:":6" %}
+        <div class="col">
+            <div class="card border-0 text-center">
+                {% if artist.avatar_url %}
+                <img src="{{ artist.avatar_url }}" alt="{{ artist.name }}" class="rounded-circle mx-auto" style="width: 100px; height: 100px; object-fit: cover;">
+                {% else %}
+                <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center bg-light" style="width: 100px; height: 100px;">
+                    <i class="fas fa-user fa-2x text-muted"></i>
+                </div>
+                {% endif %}
+                <div class="card-body p-2">
+                    <h6 class="card-title mb-0">{{ artist.name }}</h6>
+                    <small class="text-muted">热门歌曲</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 简单的搜索功能
+document.getElementById('searchInput').addEventListener('keyup', function() {
+    const searchTerm = this.value.toLowerCase();
+    const cards = document.querySelectorAll('.artist-card');
+    
+    cards.forEach(card => {
+        const artistName = card.querySelector('.card-title').textContent.toLowerCase();
+        if (artistName.includes(searchTerm)) {
+            card.closest('.col').style.display = '';
+        } else {
+            card.closest('.col').style.display = 'none';
+        }
+    });
+});
+
+// 卡片悬停效果
+document.querySelectorAll('.artist-card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-10px)';
+        card.style.boxShadow = '0 20px 30px rgba(0, 0, 0, 0.15)';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+    });
+});
+</script>
+{% endblock %}

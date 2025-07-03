@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- 返回按钮 -->
+    <div class="mb-4">
+        <a href="{% url 'artist_detail' song.artist.netease_id %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i> 返回歌手页面
+        </a>
+    </div>
+    
+    <!-- 歌曲头部信息 -->
+    <div class="song-header row mb-5">
+        <div class="col-md-4 text-center">
+            {% if song.image_url %}
+            <img src="{{ song.image_url }}" alt="{{ song.title }}封面" class="img-fluid rounded shadow-lg" 
+                 style="max-height: 300px; object-fit: cover;">
+            {% else %}
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-center mx-auto" 
+                 style="width: 300px; height: 300px;">
+                <i class="fas fa-music fa-5x text-white"></i>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-8 mt-4 mt-md-0">
+            <div class="d-flex align-items-center mb-3">
+                <h1 class="display-4 fw-bold me-3">{{ song.title }}</h1>
+                <span class="badge bg-primary align-self-start">热门歌曲</span>
+            </div>
+            
+            <div class="mb-4">
+                <h3>
+                    <a href="{% url 'artist_detail' song.artist.netease_id %}" class="text-decoration-none">
+                        <i class="fas fa-user me-2"></i>{{ song.artist.name }}
+                    </a>
+                </h3>
+                <h4 class="text-muted">
+                    <i class="fas fa-compact-disc me-2"></i>{{ song.album }}
+                </h4>
+            </div>
+            
+            <div class="d-flex flex-wrap align-items-center mb-4">
+                <div class="me-4 mb-2">
+                    <span class="fw-bold">歌曲ID:</span>
+                    <span class="ms-2">{{ song.song_id }}</span>
+                </div>
+                
+                <a href="{{ song.origin_url }}" target="_blank" class="btn btn-outline-primary me-2 mb-2">
+                    <i class="fab fa-napster me-1"></i> 网易云播放
+                </a>
+                
+                <button class="btn btn-primary mb-2">
+                    <i class="fas fa-play me-1"></i> 播放歌曲
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 歌词部分 -->
+    <div class="lyrics-section mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">
+                <i class="fas fa-file-alt me-2"></i>歌词
+            </h2>
+            <button class="btn btn-sm btn-outline-secondary" id="copyLyricsBtn">
+                <i class="fas fa-copy me-1"></i>复制歌词
+            </button>
+        </div>
+        
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                {% if lyrics_lines %}
+                    <div id="lyricsContainer" class="lyrics-content p-4 bg-light rounded">
+                        {% for line in lyrics_lines %}
+                            <p class="mb-1">{{ line }}</p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-music fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">暂无歌词</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- 歌曲信息 -->
+    <div class="song-info mb-5">
+        <h2 class="fw-bold mb-4">
+            <i class="fas fa-info-circle me-2"></i>歌曲信息
+        </h2>
+        
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">歌手</span>
+                                <span>
+                                    <a href="{% url 'artist_detail' song.artist.netease_id %}">
+                                        {{ song.artist.name }}
+                                    </a>
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">专辑</span>
+                                <span>{{ song.album }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">添加时间</span>
+                                <span>{{ song.created_at|date:"Y-m-d" }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 相关歌曲 -->
+    <div class="related-songs">
+        <h2 class="fw-bold mb-4">
+            <i class="fas fa-music me-2"></i>更多{{ song.artist.name }}的歌曲
+        </h2>
+        
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 50px;">#</th>
+                        <th scope="col">歌曲</th>
+                        <th scope="col">专辑</th>
+                        <th scope="col">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for related_song in song.artist.songs.all|slice:":5" %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-3">
+                                    <i class="fas fa-music text-secondary"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0">{{ related_song.title }}</h6>
+                                    <small class="text-muted">{{ song.artist.name }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ related_song.album }}</td>
+                        <td>
+                            <a href="{% url 'song_detail' related_song.song_id %}" 
+                               class="btn btn-sm btn-outline-secondary me-1">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                            <a href="{{ related_song.origin_url }}" target="_blank" 
+                               class="btn btn-sm btn-outline-secondary me-1">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            <button class="btn btn-sm btn-primary">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="text-center mt-3">
+            <a href="{% url 'artist_detail' song.artist.netease_id %}" class="btn btn-outline-primary">
+                查看{{ song.artist.name }}的所有歌曲
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 复制歌词功能
+document.getElementById('copyLyricsBtn').addEventListener('click', function() {
+    const lyricsContainer = document.getElementById('lyricsContainer');
+    if (lyricsContainer) {
+        const lyricsText = lyricsContainer.innerText;
+        navigator.clipboard.writeText(lyricsText).then(() => {
+            // 显示复制成功提示
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check me-1"></i>已复制';
+            
+            // 2秒后恢复原状
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 2000);
+        });
+    }
+});
+
+// 歌词区域点击效果
+const lyricsLines = document.querySelectorAll('.lyrics-content p');
+lyricsLines.forEach(line => {
+    line.addEventListener('click', function() {
+        this.classList.toggle('text-primary');
+        this.classList.toggle('fw-bold');
+    });
+});
+</script>
+
+<style>
+/* 歌词样式 */
+.lyrics-content {
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.lyrics-content p {
+    margin-bottom: 0.5rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.lyrics-content p:hover {
+    color: #0d6efd;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,181 @@
+/* 全局样式 */
+body {
+  font-family: "Noto Sans SC", "Poppins", sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* 导航栏样式 */
+.navbar {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px 0;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+/* 歌手卡片样式 */
+.artist-card {
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border-radius: 12px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 5px 15px rgba(180, 46, 46, 0.08);
+  height: 100%;
+}
+
+.artist-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-container {
+  height: 250px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  position: relative;
+}
+
+.artist-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.artist-card:hover .artist-avatar {
+  transform: scale(1.1);
+}
+
+.avatar-placeholder {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+}
+
+.artist-description {
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  min-height: 60px;
+}
+
+/* 页脚样式 */
+footer {
+  margin-top: 80px;
+  background-color: #1a1a1a;
+}
+
+footer h5 {
+  color: #f8f9fa;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .card-img-container {
+    height: 200px;
+  }
+
+  .hero-section {
+    padding: 2rem 1.5rem;
+  }
+
+  .hero-section h1 {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-img-container {
+    height: 180px;
+  }
+
+  .hero-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .hero-section h1 {
+    font-size: 1.8rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+}
+
+/* 自定义按钮 */
+.btn-outline-primary {
+  transition: all 0.3s;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+
+
+/*歌手详情页*/
+.artist-header {
+    background: linear-gradient(to right, #f8f9fa, #e9ecef);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.songs-section {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+.artist-biography {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.bio-content {
+    line-height: 1.8;
+    color: #495057;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(29, 185, 84, 0.05);
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    padding: 1rem;
+}
+
+/* 歌曲序号样式 */
+.table tbody tr th {
+    color: #6c757d;
+    font-weight: normal;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .artist-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .artist-header .btn {
+        margin-bottom: 10px;
+    }
+}

@@ -44,7 +44,8 @@ def artist_list(request):
         "recommended_artists": recommended_artists,
         "all_artists": all_artists,
         "search_results_count": paginator.count,
-        "search_time": round(search_time * 1000, 2)  # 转换为毫秒并保留2位小数
+        "search_time": round(search_time * 1000, 2) , # 转换为毫秒并保留2位小数
+        "search_query": search_query,
     }
 
     return render(request, "artists/list.html", context)

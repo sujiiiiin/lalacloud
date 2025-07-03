@@ -13,6 +13,8 @@ def artist_list(request):
     else:
         artists = Artist.objects.all().order_by("id")
 
+    all_artists = Artist.objects.all().order_by("id")
+
     # 创建分页器
     paginator = Paginator(artists, 28)
     page = request.GET.get("page")
@@ -31,6 +33,7 @@ def artist_list(request):
         "artists": artists,
         "page_title": "热门歌手列表",
         "artist_count": paginator.count,
+        "all_artists": all_artists,
     }
 
     return render(request, "artists/list.html", context)

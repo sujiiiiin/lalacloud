@@ -50,6 +50,8 @@
 
 {% block content %}
 <!-- 英雄区域 -->
+{% if search_query %}
+{% else %}
 <section class="hero-section">
     <div class="row align-items-center">
         <div class="col-md-7">
@@ -83,6 +85,7 @@
         </div>
     </div>
 </section>
+{%endif%}
 
 <!-- 筛选和搜索 -->
 <div class="row mb-4">

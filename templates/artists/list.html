@@ -96,13 +96,13 @@
         </div>
     </div>
     <div class="col-md-4 d-flex align-items-center justify-content-md-end">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="搜索歌手..." id="searchInput">
-            <button class="btn btn-primary" type="button">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-    </div>
+    <form method="GET" action="{% url 'artist_list' %}" class="input-group">
+        <input type="text" class="form-control" name="q" value="{{ search_query }}" placeholder="搜索歌手...">
+        <button class="btn btn-primary" type="submit">
+            <i class="fas fa-search"></i>
+        </button>
+    </form>
+</div>
 </div>
 
 <!-- 歌手列表 -->

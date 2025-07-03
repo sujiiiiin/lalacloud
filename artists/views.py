@@ -7,8 +7,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # 歌手列表页
 def artist_list(request):
-    # 获取所有歌手并按名字排序
-    artists = Artist.objects.all().order_by("id")
+    search_query = request.GET.get("q", "")
+    if search_query:
+        artists = Artist.objects.filter(name__icontains=search_query).order_by("id")
+    else:
+        artists = Artist.objects.all().order_by("id")
 
     # 创建分页器
     paginator = Paginator(artists, 28)

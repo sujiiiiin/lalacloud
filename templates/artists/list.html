@@ -102,8 +102,25 @@
             <i class="fas fa-search"></i>
         </button>
     </form>
+    </div>
 </div>
+
+<!-- 添加搜索结果信息 -->
+{% if search_query %}
+<div class="row mt-3">
+    <div class="col">
+        <div class="alert alert-info d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-info-circle me-2"></i>
+                找到 <span class="fw-bold">{{ search_results_count }}</span> 位匹配"{{ search_query }}"的歌手
+            </div>
+            <div class="text-end">
+                <small class="text-muted">搜索耗时: {{ search_time }} 毫秒</small>
+            </div>
+        </div>
+    </div>
 </div>
+{% endif %}
 
 <!-- 歌手列表 -->
 {% if artists %}
@@ -158,12 +175,11 @@
 </div>
 
 <!-- 分页控件 -->
-<!-- 分页控件 -->
 <nav class="mt-5">
     <ul class="pagination justify-content-center">
         {% if artists.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ artists.previous_page_number }}" tabindex="-1">上一页</a>
+            <a class="page-link" href="?page={{ artists.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" tabindex="-1">上一页</a>
         </li>
         {% else %}
         <li class="page-item disabled">
@@ -175,13 +191,13 @@
             {% if artists.number == i %}
             <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
             {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ i }}{% if search_query %}&q={{ search_query }}{% endif %}">{{ i }}</a></li>
             {% endif %}
         {% endfor %}
         
         {% if artists.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ artists.next_page_number }}">下一页</a>
+            <a class="page-link" href="?page={{ artists.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}">下一页</a>
         </li>
         {% else %}
         <li class="page-item disabled">
@@ -205,7 +221,7 @@
     </div>
     
     <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3">
-        {% for artist in all_artists|slice:"0:6" %}
+        {% for artist in recommended_artists %}
         <div class="col">
             <div class="card border-0 text-center">
                 {% if artist.avatar_url %}

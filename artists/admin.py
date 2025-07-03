@@ -30,3 +30,25 @@ class SongAdmin(admin.ModelAdmin):
     list_filter = ["artist"]
     search_fields = ["title", "album"]
 
+# artists/admin.py
+
+from .models import Comment
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'song', 'short_content', 'created_at', 'approved')
+    list_filter = ('approved', 'created_at')
+    search_fields = ('name', 'content', 'song__title')
+    actions = ['approve_comments', 'disapprove_comments']
+    
+    def short_content(self, obj):
+        return obj.content[:50] + '...' if len(obj.content) > 50 else obj.content
+    short_content.short_description = '评论内容'
+    
+    def approve_comments(self, request, queryset):
+        queryset.update(approved=True)
+    approve_comments.short_description = "审核通过所选评论"
+    
+    def disapprove_comments(self, request, queryset):
+        queryset.update(approved=False)
+    disapprove_comments.short_description = "取消审核所选评论"

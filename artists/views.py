@@ -34,7 +34,7 @@ def artist_list(request):
         artists = paginator.page(paginator.num_pages)
 
     # 获取推荐歌手（随机6位）
-    recommended_artists = Artist.objects.order_by('?')[:6]
+    recommended_artists = Artist.objects.order_by("?")[:6]
 
     # 传递给模板的上下文数据
     context = {
@@ -44,7 +44,7 @@ def artist_list(request):
         "recommended_artists": recommended_artists,
         "all_artists": all_artists,
         "search_results_count": paginator.count,
-        "search_time": round(search_time * 1000, 2) , # 转换为毫秒并保留2位小数
+        "search_time": round(search_time * 1000, 2),  # 转换为毫秒并保留2位小数
         "search_query": search_query,
     }
 
@@ -52,7 +52,7 @@ def artist_list(request):
 
 
 # 歌手详情页
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 
 def artist_detail(request, netease_id):
@@ -76,4 +76,43 @@ def song_detail(request, song_id):
         "lyrics_lines": lyrics_lines,
         "page_title": f"{song.title} - 歌曲详情",
     }
+    return render(request, "songs/detail.html", context)
+
+
+# 歌曲评论
+
+from .forms import CommentForm
+from .models import Comment
+
+
+def song_detail(request, song_id):
+    song = get_object_or_404(Song, song_id=song_id)
+    lyrics_lines = song.lyrics.split("\n") if song.lyrics else []
+
+    # 处理评论提交
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            # 保存评论，但不提交到数据库
+            new_comment = form.save(commit=False)
+            # 设置评论对应的歌曲
+            new_comment.song = song
+            # 保存到数据库
+            new_comment.save()
+            # 重定向到当前页面，避免重复提交
+            return redirect("song_detail", song_id=song.song_id)
+    else:
+        form = CommentForm()
+
+    # 获取当前歌曲的所有已审核评论
+    comments = song.comments.filter(approved=True)
+
+    context = {
+        "song": song,
+        "lyrics_lines": lyrics_lines,
+        "page_title": f"{song.title} - 歌曲详情",
+        "form": form,
+        "comments": comments,
+    }
+
     return render(request, "songs/detail.html", context)

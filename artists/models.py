@@ -75,3 +75,24 @@ class Song(models.Model):
         if not self.origin_url.endswith(str(self.song_id)):
             self.origin_url = f"https://music.163.com/#/song?id={self.song_id}"
         super().save(*args, **kwargs)
+
+
+class Comment(models.Model):
+    song = models.ForeignKey(
+        Song,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name="歌曲"
+    )
+    name = models.CharField(max_length=100, verbose_name="昵称")
+    content = models.TextField(max_length=1000, verbose_name="评论内容")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+    approved = models.BooleanField(default=True, verbose_name="审核通过")
+    
+    class Meta:
+        verbose_name = "评论"
+        verbose_name_plural = "评论列表"
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.name} 对《{self.song.title}》的评论"

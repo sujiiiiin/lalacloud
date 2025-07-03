@@ -126,6 +126,58 @@
             </div>
         </div>
     </div>
+
+    <!-- 评论区域 -->
+    <div class="comments-section mb-5">
+        <h2 class="fw-bold mb-4">
+            <i class="fas fa-comments me-2"></i>评论
+            <span class="badge bg-secondary">{{ comments|length }}</span>
+        </h2>
+    
+    <!-- 评论表单 -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="post" action="{% url 'song_detail' song.song_id %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_name" class="form-label">昵称</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="text-danger">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label for="id_content" class="form-label">评论内容</label>
+                    {{ form.content }}
+                    {% if form.content.errors %}
+                        <div class="text-danger">{{ form.content.errors }}</div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">提交评论</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 评论列表 -->
+    <div class="comments-list">
+        {% for comment in comments %}
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">{{ comment.name }}</h5>
+                    <small class="text-muted">{{ comment.created_at|date:"Y-m-d H:i" }}</small>
+                </div>
+                <p class="card-text">{{ comment.content|linebreaksbr }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-4">
+            <i class="fas fa-comment-slash fa-2x text-muted mb-3"></i>
+            <p class="text-muted">暂无评论，快来发表第一条评论吧！</p>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
     
     <!-- 相关歌曲 -->
     <div class="related-songs">
@@ -186,6 +238,47 @@
     </div>
 </div>
 {% endblock %}
+
+<style>
+/* 评论表单样式 */
+.comments-section .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+#id_name, #id_content {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s;
+}
+
+#id_name:focus, #id_content:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 评论列表样式 */
+.comments-list .card {
+    border-left: 3px solid #0d6efd;
+    transition: transform 0.2s;
+}
+
+.comments-list .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.comments-list .card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.comments-list .card-text {
+    color: #444;
+    line-height: 1.6;
+}
+</style>
+
 
 {% block extra_js %}
 <script>

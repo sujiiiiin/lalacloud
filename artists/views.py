@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 
 # Create your views here.
 from .models import Artist, Song
@@ -18,10 +18,12 @@ def artist_list(request):
         artists = Artist.objects.all().order_by("id")
 
     all_artists = Artist.objects.all().order_by("id")
+    # 分别传参本页歌手和全部歌手
+    # 按id即热度排序
 
-    search_time = time.time() - start_time
+    search_time = time.time() - start_time  # 记录检索时间
     # 创建分页器
-    paginator = Paginator(artists, 28)
+    paginator = Paginator(artists, 28)  # 28个歌手为一页
     page = request.GET.get("page")
 
     try:
@@ -35,14 +37,15 @@ def artist_list(request):
 
     # 获取推荐歌手（随机6位）
     recommended_artists = Artist.objects.order_by("?")[:6]
+    # ? 是 Django ORM 支持的特殊语法，表示让数据库返回的结果顺序是随机的
 
     # 传递给模板的上下文数据
     context = {
-        "artists": artists,
+        "artists": artists, # 分页歌手
         "page_title": "热门歌手列表",
         "artist_count": paginator.count,
-        "recommended_artists": recommended_artists,
-        "all_artists": all_artists,
+        "recommended_artists": recommended_artists, # 猜你喜欢歌手
+        "all_artists": all_artists, # 全部歌手
         "search_results_count": paginator.count,
         "search_time": round(search_time * 1000, 2),  # 转换为毫秒并保留2位小数
         "search_query": search_query,
@@ -51,10 +54,8 @@ def artist_list(request):
     return render(request, "artists/list.html", context)
 
 
+
 # 歌手详情页
-from django.shortcuts import render, get_object_or_404, redirect
-
-
 def artist_detail(request, netease_id):
     # 获取歌手对象，如果不存在则返回404
     artist = get_object_or_404(Artist, netease_id=netease_id)

@@ -38,7 +38,7 @@ class Song(models.Model):
     artist = models.ForeignKey(
         Artist,
         on_delete=models.CASCADE,
-        related_name="songs",
+        related_name="songs",   # 反向搜索：允许通过 artist.songs.all() 反向查询该歌手的所有歌曲
         verbose_name="歌手名",
     )
 
@@ -51,9 +51,7 @@ class Song(models.Model):
         blank=True,
     )
 
-    # 歌词
     lyrics = models.TextField(blank=True, verbose_name="歌词", help_text="歌曲完整歌词")
-    # 自动记录创建时间
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
     class Meta:

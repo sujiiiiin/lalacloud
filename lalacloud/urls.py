@@ -25,4 +25,5 @@ urlpatterns = [
     path('artist/<int:netease_id>/', views.artist_detail, name='artist_detail'), # 歌手详情页
     path('song/<int:song_id>/', views.song_detail, name='song_detail'),# 歌曲详情页
     path('songs/', views.song_list, name='song_list'),  #歌曲列表页
+    path('random-artist/', views.random_artist, name='random_artist'), #随机推荐
 ]

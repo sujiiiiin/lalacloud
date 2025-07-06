@@ -45,6 +45,152 @@
         backdrop-filter: blur(5px);
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
+
+    /* 随机推荐模态框样式 */
+    .random-artist-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .random-artist-modal.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .random-artist-card {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transform: translateY(20px);
+        transition: transform 0.4s ease;
+    }
+    
+    .random-artist-modal.show .random-artist-card {
+        transform: translateY(0);
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.3);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-close:hover {
+        background: rgba(0, 0, 0, 0.5);
+        transform: rotate(90deg);
+    }
+    
+    .random-artist-avatar {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
+    
+    .random-artist-content {
+        padding: 25px;
+        text-align: center;
+    }
+    
+    .random-artist-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .random-artist-description {
+        color: #666;
+        margin-bottom: 25px;
+        max-height: 100px;
+        overflow-y: auto;
+    }
+    
+    .random-artist-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    
+    .random-artist-btn {
+        padding: 10px 25px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-detail {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border: none;
+    }
+    
+    .btn-close-modal {
+        background: #f0f0f0;
+        color: #555;
+        border: 1px solid #ddd;
+    }
+    
+    .random-artist-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-detail:hover {
+        background: linear-gradient(135deg, #5a0db9 0%, #1c66e5 100%);
+        color: white;
+    }
+    
+    .btn-close-modal:hover {
+        background: #e0e0e0;
+    }
+    
+    /* 加载动画 */
+    .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 300px;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(106, 17, 203, 0.2);
+        border-top: 5px solid #6a11cb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 </style>
 {% endblock %}
 
@@ -59,7 +205,7 @@
             <p class="lead">探索网易云音乐最受欢迎的{{ artist_count }}位歌手</p>
             <p class="mb-4">发现你喜爱的音乐人，聆听他们的热门歌曲</p>
             <a href="#" class="btn btn-light btn-lg me-2">浏览歌手</a>
-            <a href="#" class="btn btn-outline-light btn-lg">随机推荐</a>
+            <a href="#" class="btn btn-outline-light btn-lg" id="random-artist-btn">随机推荐</a>
         </div>
         <div class="col-md-5">
             <div class="row g-3">
@@ -243,6 +389,22 @@
         {% endfor %}
     </div>
 </section>
+
+<!--随机推荐模态框-->
+<div class="random-artist-modal" id="random-artist-modal">
+    <div class="random-artist-card">
+        <div class="modal-close" id="modal-close">
+            <i class="fas fa-times"></i>
+        </div>
+        <div id="random-artist-content">
+            <!-- 内容将通过JavaScript动态加载 -->
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -273,6 +435,104 @@ document.querySelectorAll('.artist-card').forEach(card => {
         card.style.transform = '';
         card.style.boxShadow = '';
     });
+});
+</script>
+
+
+<script>
+// 随机推荐功能
+document.getElementById('random-artist-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // 显示模态框
+    const modal = document.getElementById('random-artist-modal');
+    modal.classList.add('show');
+    
+    // 显示加载动画
+    const content = document.getElementById('random-artist-content');
+    content.innerHTML = `
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+    `;
+    
+    // 获取随机歌手数据
+    fetch("{% url 'random_artist' %}")
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const artist = data.artist;
+                // 创建随机歌手卡片内容
+                let avatarHtml = '';
+                if (artist.avatar_url) {
+                    avatarHtml = `<img src="${artist.avatar_url}" alt="${artist.name}" class="random-artist-avatar">`;
+                } else {
+                    avatarHtml = `
+                        <div class="random-artist-avatar d-flex align-items-center justify-content-center bg-light">
+                            <i class="fas fa-user fa-4x text-muted"></i>
+                        </div>
+                    `;
+                }
+                
+                content.innerHTML = `
+                    ${avatarHtml}
+                    <div class="random-artist-content">
+                        <h3 class="random-artist-name">${artist.name}</h3>
+                        <div class="random-artist-description">
+                            ${artist.description || '暂无简介'}
+                        </div>
+                        <div class="random-artist-actions">
+                            <a href="/artist/${artist.netease_id}/" class="random-artist-btn btn-detail">查看详情</a>
+                            <button class="random-artist-btn btn-close-modal">关闭</button>
+                        </div>
+                    </div>
+                `;
+                
+                // 添加关闭按钮事件
+                document.querySelector('.btn-close-modal').addEventListener('click', function() {
+                    modal.classList.remove('show');
+                });
+            } else {
+                content.innerHTML = `
+                    <div class="random-artist-content text-center py-5">
+                        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                        <h3>获取随机歌手失败</h3>
+                        <p>${data.message || '请稍后再试'}</p>
+                        <button class="random-artist-btn btn-close-modal mt-3">关闭</button>
+                    </div>
+                `;
+                
+                document.querySelector('.btn-close-modal').addEventListener('click', function() {
+                    modal.classList.remove('show');
+                });
+            }
+        })
+        .catch(error => {
+            content.innerHTML = `
+                <div class="random-artist-content text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+                    <h3>请求失败</h3>
+                    <p>网络连接出现问题，请检查您的网络</p>
+                    <button class="random-artist-btn btn-close-modal mt-3">关闭</button>
+                </div>
+            `;
+            
+            document.querySelector('.btn-close-modal').addEventListener('click', function() {
+                modal.classList.remove('show');
+            });
+        });
+});
+
+// 关闭模态框事件
+document.getElementById('modal-close').addEventListener('click', function() {
+    document.getElementById('random-artist-modal').classList.remove('show');
+});
+
+// 点击模态框背景关闭
+document.getElementById('random-artist-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        this.classList.remove('show');
+    }
 });
 </script>
 {% endblock %}

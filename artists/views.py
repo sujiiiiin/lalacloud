@@ -4,6 +4,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Artist, Song
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import time
+from django.conf import settings
+import os
 
 
 # 歌手列表页
@@ -56,13 +58,41 @@ def artist_list(request):
 
 
 # 歌手详情页
+
+from artists.utils.lyrics_processor import LyricsProcessor
 def artist_detail(request, netease_id):
     # 获取歌手对象，如果不存在则返回404
     artist = get_object_or_404(Artist, netease_id=netease_id)
 
     # 获取该歌手的所有歌曲
-    songs = artist.songs.all()
-    context = {"artist": artist, "songs": songs, "page_title": f"{artist.name} - 详情"}
+    songs = Song.objects.filter(artist=artist)
+    
+    # 获取所有歌词
+    lyrics_list = [song.lyrics for song in songs if song.lyrics]
+    
+    # 生成词云
+    wordcloud_path = None
+    if lyrics_list:
+        processor = LyricsProcessor(artist.id)
+        word_freq = processor.process_lyrics(lyrics_list)
+        
+        # # 可选：使用特定形状的遮罩
+        # mask_image = os.path.join(settings.BASE_DIR, 'static', 'images', 'music_mask.png')
+        # wordcloud_path = processor.generate_wordcloud(word_freq, mask_image)
+    
+    # 准备上下文
+    top_words = []
+    if word_freq:
+        top_words = word_freq.most_common(10)
+    
+    context = {
+        'artist': artist,
+        'songs': songs,
+        'wordcloud_path': wordcloud_path,
+        'top_words': top_words,
+        'word_count': sum(word_freq.values()) if word_freq else 0
+    }
+
     return render(request, "artists/detail.html", context)
 
 # 歌曲列表页
@@ -156,3 +186,36 @@ def song_detail(request, song_id):
     }
 
     return render(request, "songs/detail.html", context)
+
+
+from django.http import JsonResponse
+import random
+
+def random_artist(request):
+    # 获取所有歌手的ID列表
+    artist_ids = Artist.objects.values_list('id', flat=True)
+    
+    if not artist_ids:
+        return JsonResponse({
+            'success': False,
+            'message': '没有可用的歌手数据'
+        })
+    
+    # 随机选择一个歌手ID
+    random_id = random.choice(artist_ids)
+    
+    # 获取随机歌手对象
+    artist = Artist.objects.get(id=random_id)
+    
+    # 构建返回数据
+    data = {
+        'success': True,
+        'artist': {
+            'netease_id': artist.netease_id,
+            'name': artist.name,
+            'avatar_url': artist.avatar_url,
+            'description': artist.description,
+        }
+    }
+    
+    return JsonResponse(data)

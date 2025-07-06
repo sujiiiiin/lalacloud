@@ -124,3 +124,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# 媒体文件配置
+MEDIA_URL = '/media/'  # 必须以斜杠开头
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 文件系统路径

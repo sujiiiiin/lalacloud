@@ -73,12 +73,17 @@ def artist_detail(request, netease_id):
     # 生成词云
     wordcloud_path = os.path.join(settings.BASE_DIR, 'wordclouds')
     if lyrics_list:
-        processor = LyricsProcessor(artist.id)
+        processor = LyricsProcessor(artist.id,artist.name)
         word_freq = processor.process_lyrics(lyrics_list)
         
         # # 可选：使用特定形状的遮罩
         # mask_image = os.path.join(settings.BASE_DIR, 'static', 'images', 'music_mask.png')
-        wordcloud_path = processor.generate_wordcloud(word_freq)
+
+        relative_path = processor.generate_wordcloud(word_freq,artist.id)
+        
+        if relative_path:
+            # 构建完整的媒体 URL - 确保以斜杠开头
+            wordcloud_path = f"{settings.MEDIA_URL.rstrip('/')}/{relative_path.lstrip('/')}"
     
     # 准备上下文
     top_words = []

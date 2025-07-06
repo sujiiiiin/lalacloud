@@ -2,7 +2,6 @@ import jieba
 import re
 from collections import Counter
 from wordcloud import WordCloud
-import imageio
 import os
 from django.conf import settings
 
@@ -61,9 +60,9 @@ class LyricsProcessor:
         wc.generate_from_frequencies(word_freq)
         
         # 保存到媒体目录
-        output_dir = os.path.join(settings.MEDIA_ROOT, 'wordclouds')
+        output_dir = os.path.join(settings.BASE_DIR, 'wordclouds')
         os.makedirs(output_dir, exist_ok=True)
         output_path = os.path.join(output_dir, f'artist_{self.artist_id}.png')
         wc.to_file(output_path)
         
-        return os.path.join('media', 'wordclouds', f'artist_{self.artist_id}.png')
+        return os.path.join(settings.BASE_DIR,'wordclouds', f'artist_{self.artist_id}.png')

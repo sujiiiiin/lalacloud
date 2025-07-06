@@ -69,16 +69,16 @@ def artist_detail(request, netease_id):
     
     # 获取所有歌词
     lyrics_list = [song.lyrics for song in songs if song.lyrics]
-    
+    print(len(lyrics_list))
     # 生成词云
-    wordcloud_path = None
+    wordcloud_path = os.path.join(settings.BASE_DIR, 'wordclouds')
     if lyrics_list:
         processor = LyricsProcessor(artist.id)
         word_freq = processor.process_lyrics(lyrics_list)
         
         # # 可选：使用特定形状的遮罩
         # mask_image = os.path.join(settings.BASE_DIR, 'static', 'images', 'music_mask.png')
-        # wordcloud_path = processor.generate_wordcloud(word_freq, mask_image)
+        wordcloud_path = processor.generate_wordcloud(word_freq)
     
     # 准备上下文
     top_words = []

@@ -1,6 +1,7 @@
+# 用于绘制词云
 import jieba
 import re
-from collections import Counter
+from collections import Counter  # 计数器
 from wordcloud import WordCloud
 import os
 from django.conf import settings
@@ -14,8 +15,10 @@ class LyricsProcessor:
 
     def load_stopwords(self, artist_name):
         """加载停用词表"""
-        stopwords_path = os.path.join(settings.BASE_DIR, "data", "stopwords.txt")
-        stopwords = set()
+        stopwords_path = os.path.join(
+            settings.BASE_DIR, "data", "stopwords.txt"
+        )  # {BASE_DIR/data/stopwords.txt}
+        stopwords = set()  # 用集合set储存，无序且不重复
 
         if os.path.exists(stopwords_path):
             with open(stopwords_path, "r", encoding="utf-8") as f:
@@ -53,14 +56,14 @@ class LyricsProcessor:
             "呀",
         }
         stopwords.update(common_stopwords)
-        stopwords.update(artist_name)
+        stopwords.update(artist_name)  # 想要去除歌手名，但好像没起作用
 
         return stopwords
 
     def clean_text(self, text):
         """清洗歌词文本"""
         # 移除括号内容（如[副歌]、[间奏]等）
-        text = re.sub(r"\[.*?\]", "", text)
+        text = re.sub(r"\[.*?\]", "", text)  # 替换逻辑：sub(A,B,text)
         # 移除非中文字符
         text = re.sub(r"[^\u4e00-\u9fa5]", " ", text)
         # 移除多余空格
@@ -69,14 +72,14 @@ class LyricsProcessor:
 
     def process_lyrics(self, lyrics_list):
         """处理歌词列表，返回词频统计"""
-        all_text = " ".join([self.clean_text(lyric) for lyric in lyrics_list])
+        all_text = " ".join(
+            [self.clean_text(lyric) for lyric in lyrics_list]
+        )  # python的推导式语法
         words = jieba.cut(all_text)  # 调用jieba库进行分词
-
         # 过滤停用词和单字
         filtered_words = [
             word for word in words if word not in self.stopwords and len(word) > 1
         ]
-
         return Counter(filtered_words)
 
     def generate_wordcloud(self, word_freq, mask_image=None):
@@ -90,14 +93,13 @@ class LyricsProcessor:
             height=600,
             colormap="viridis",
         )
-
-        # # 使用形状遮罩（可选）
+        # # 使用形状遮罩（暂不使用）
         # if mask_image:
         #     mask = imageio.imread(mask_image)
         #     wc.mask = mask
 
         # 生成词云
-        wc.generate_from_frequencies(word_freq)
+        wc.generate_from_frequencies(word_freq)  # 调用wordcloud库生成词云
 
         # 保存到媒体目录
         output_dir = os.path.join(settings.BASE_DIR, "media", "wordclouds")
@@ -105,4 +107,6 @@ class LyricsProcessor:
         output_path = os.path.join(output_dir, f"artist_{self.artist_id}.png")
         wc.to_file(output_path)
 
-        return os.path.join("wordclouds", f"artist_{self.artist_id}.png")
+        return os.path.join(
+            "wordclouds", f"artist_{self.artist_id}.png"
+        )  # 返回相对路径

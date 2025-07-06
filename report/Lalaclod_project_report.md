@@ -174,6 +174,10 @@ D:.
    ![alt text](image-16.png)
    ![alt text](image-33.png)
    设置了鼠标悬浮的阴影上浮特效
+5. 管理员登陆的增删改查页面
+   基于admin.py中的函数实现
+   ![alt text](image-34.png)
+6. 
 ## 数据分析报告
    ### 结论1：
    数据分析过程：从歌手简介中提取

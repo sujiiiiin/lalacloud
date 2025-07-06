@@ -65,6 +65,47 @@ def artist_detail(request, netease_id):
     context = {"artist": artist, "songs": songs, "page_title": f"{artist.name} - 详情"}
     return render(request, "artists/detail.html", context)
 
+# 歌曲列表页
+def song_list(request):
+    start_time = time.time()
+
+    # 搜索功能，后端分页
+    search_query = request.GET.get("q", "")
+    if search_query:
+        song_list = Song.objects.filter(title__icontains=search_query).order_by('id')
+    else:
+        song_list = Song.objects.all().order_by('id')
+
+    all_songs = Song.objects.all().order_by('id')
+
+    search_time = time.time() - start_time  # 记录检索时间
+
+    # 创建分页器
+    paginator = Paginator(song_list, 20)  # 每页20首歌曲
+    page = request.GET.get('page')
+
+    try:
+        songs = paginator.page(page)
+    except PageNotAnInteger:
+        # 如果page参数不是整数，显示第一页
+        songs = paginator.page(1)
+    except EmptyPage:
+        # 如果页数超出范围，显示最后一页
+        songs = paginator.page(paginator.num_pages)
+
+    context = {
+        'songs': songs,
+        'page_title': '歌曲列表',
+        'song_count': Song.objects.count(),
+        "all_songs":all_songs,
+        "search_results_count": paginator.count,
+        "search_time": round(search_time * 1000, 2),  # 转换为毫秒并保留2位小数
+        "search_query": search_query,
+
+    }
+    return render(request, 'songs/list.html', context)
+
+
 
 # 歌曲详情页
 def song_detail(request, song_id):

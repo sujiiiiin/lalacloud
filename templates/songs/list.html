@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 3rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .song-card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+    }
+    
+    .song-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .song-cover {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        object-fit: cover;
+        margin-right: 15px;
+    }
+    
+    .song-info {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: white;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .song-details {
+        flex: 1;
+    }
+    
+    .song-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .song-artist {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .song-album {
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+    
+    .song-action {
+        padding: 10px 15px;
+        background: #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .song-stats {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .play-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #0d6efd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .play-btn:hover {
+        background: #0b5ed7;
+        transform: scale(1.1);
+    }
+    
+    .scroll-container {
+        max-height: 70vh;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+    
+    /* 自定义滚动条 */
+    .scroll-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .scroll-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .scroll-container::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
+    }
+    
+    .scroll-container::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+    
+    /* 滚动动画效果 */
+    .scroll-container.scrolling {
+        transition: scroll 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- 英雄区域 -->
+{% if search_query %}
+{% else %}
+<section class="hero-section">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-4 fw-bold">{{ page_title }}</h1>
+            <p class="lead">探索网易云音乐最受欢迎的歌曲收藏</p>
+            <p class="mb-4">发现你喜爱的音乐，感受旋律的魅力</p>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="stats-card">
+                <h3 class="display-5 fw-bold">{{ song_count }}</h3>
+                <p>热门歌曲</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- 筛选和搜索 -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-outline-primary active">全部</button>
+            <button class="btn btn-outline-primary">流行</button>
+            <button class="btn btn-outline-primary">摇滚</button>
+            <button class="btn btn-outline-primary">民谣</button>
+            <button class="btn btn-outline-primary">电子</button>
+        </div>
+    </div>
+    <div class="col-md-4 d-flex align-items-center justify-content-md-end">
+        <form method="GET" action="{% url 'song_list' %}" class="input-group">
+            <input type="text" class="form-control" name="q" placeholder="搜索歌曲...">
+            <button class="btn btn-primary" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+</div>
+<!-- 添加搜索结果信息 -->
+ {% if search_query %}
+<div class="row mt-3">
+    <div class="col">
+        <div class="alert alert-info d-flex justify-content-between align-items-center py-2">
+            <div>
+                <i class="fas fa-info-circle me-2"></i>
+                找到 <span class="fw-bold">{{ search_results_count }}</span> 位匹配"{{ search_query }}"的歌曲
+            </div>
+            <div>
+                <small class="text-muted">搜索耗时: {{ search_time }} 毫秒</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- 歌曲列表 -->
+<div class="scroll-container">
+    {% for song in songs %}
+    <div class="song-card">
+        <div class="song-info">
+            {% if song.image_url %}
+            <img src="{{ song.image_url }}" alt="{{ song.title }}" class="song-cover">
+            {% else %}
+            <div class="song-cover d-flex align-items-center justify-content-center bg-light">
+                <i class="fas fa-music text-muted"></i>
+            </div>
+            {% endif %}
+            <div class="song-details">
+                <div class="song-title">{{ song.title }}</div>
+                <div class="song-artist">{{ song.artist.name }}</div>
+                <div class="song-album">专辑：{{ song.album }}</div>
+            </div>
+        </div>
+        <div class="song-action">
+            <div class="song-stats">
+                <i class="fas fa-play me-1"></i> 1,245,678
+                <i class="fas fa-heart ms-3 me-1"></i> 56,789
+            </div>
+            <a href="{% url 'song_detail' song.song_id %}" class="play-btn">
+                <i class="fas fa-play"></i>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 分页控件 -->
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if songs.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ songs.previous_page_number }}" tabindex="-1">上一页</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">上一页</a>
+        </li>
+        {% endif %}
+        
+        <!-- 第一页 -->
+        <li class="page-item {% if songs.number == 1 %}active{% endif %}">
+            <a class="page-link" href="?page=1">1</a>
+        </li>
+        
+        <!-- 省略号 -->
+        {% if songs.number > 3 %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#">...</a>
+        </li>
+        {% endif %}
+        
+        <!-- 当前页的前一页 -->
+        {% if songs.number > 2 %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ songs.previous_page_number }}">{{ songs.previous_page_number }}</a>
+        </li>
+        {% endif %}
+        
+        <!-- 当前页 -->
+        {% if songs.number > 1 and songs.number < songs.paginator.num_pages %}
+        <li class="page-item active">
+            <a class="page-link" href="?page={{ songs.number }}">{{ songs.number }}</a>
+        </li>
+        {% endif %}
+        
+        <!-- 当前页的后一页 -->
+        {% if songs.number < songs.paginator.num_pages|add:"-1" %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ songs.next_page_number }}">{{ songs.next_page_number }}</a>
+        </li>
+        {% endif %}
+        
+        <!-- 省略号 -->
+        {% if songs.number < songs.paginator.num_pages|add:"-2" %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#">...</a>
+        </li>
+        {% endif %}
+        
+        <!-- 最后一页 -->
+        {% if songs.paginator.num_pages > 1 %}
+        <li class="page-item {% if songs.number == songs.paginator.num_pages %}active{% endif %}">
+            <a class="page-link" href="?page={{ songs.paginator.num_pages }}">{{ songs.paginator.num_pages }}</a>
+        </li>
+        {% endif %}
+        
+        {% if songs.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ songs.next_page_number }}">下一页</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#">下一页</a>
+        </li>
+        {% endif %}
+    </ul>
+    
+    <!-- 页码跳转表单 -->
+    <div class="d-flex justify-content-center mt-3">
+        <form method="GET" action="{% url 'song_list' %}" class="d-flex align-items-center">
+            <span class="me-2">跳转到:</span>
+            <input type="number" 
+                   class="form-control" 
+                   name="page" 
+                   min="1" 
+                   max="{{ songs.paginator.num_pages }}"
+                   style="width: 80px;"
+                   value="{{ songs.number }}">
+            <button type="submit" class="btn btn-primary ms-2">跳转</button>
+        </form>
+    </div>
+</nav>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 滚动特效
+const scrollContainer = document.querySelector('.scroll-container');
+let isScrolling;
+
+scrollContainer.addEventListener('scroll', function() {
+    // 清除之前的超时
+    clearTimeout(isScrolling);
+    
+    // 添加滚动效果类
+    scrollContainer.classList.add('scrolling');
+    
+    // 设置超时
+    isScrolling = setTimeout(function() {
+        // 滚动停止后移除类
+        scrollContainer.classList.remove('scrolling');
+    }, 200);
+});
+
+// 点击播放按钮效果
+document.querySelectorAll('.play-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const pulse = document.createElement('div');
+        pulse.style.position = 'absolute';
+        pulse.style.width = '0';
+        pulse.style.height = '0';
+        pulse.style.borderRadius = '50%';
+        pulse.style.background = 'rgba(13, 110, 253, 0.3)';
+        pulse.style.transform = 'translate(-50%, -50%)';
+        pulse.style.transition = 'all 0.6s ease-out';
+        pulse.style.zIndex = '100';
+        
+        const rect = this.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        
+        pulse.style.left = `${x}px`;
+        pulse.style.top = `${y}px`;
+        
+        document.body.appendChild(pulse);
+        
+        // 动画
+        setTimeout(() => {
+            pulse.style.width = '100px';
+            pulse.style.height = '100px';
+            pulse.style.opacity = '0';
+            pulse.style.margin = '-50px 0 0 -50px';
+        }, 10);
+        
+        // 导航到详情页
+        setTimeout(() => {
+            window.location.href = this.href;
+        }, 300);
+    });
+});
+</script>
+{% endblock %}

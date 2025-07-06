@@ -1,5 +1,3 @@
-# artists/forms.py
-
 from django import forms
 from .models import Comment
 
@@ -15,7 +13,7 @@ class CommentForm(forms.ModelForm):
             'content': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': '写下你的评论...'
+                'placeholder': '在这里写下你的评论...'
             })
         }
         labels = {

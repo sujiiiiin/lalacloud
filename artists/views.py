@@ -81,10 +81,8 @@ def song_detail(request, song_id):
 
 
 # 歌曲评论
-
 from .forms import CommentForm
 from .models import Comment
-
 
 def song_detail(request, song_id):
     song = get_object_or_404(Song, song_id=song_id)

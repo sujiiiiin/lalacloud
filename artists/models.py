@@ -79,7 +79,7 @@ class Comment(models.Model):
     song = models.ForeignKey(
         Song,
         on_delete=models.CASCADE,
-        related_name='comments',
+        related_name='comments', # 反向搜索：允许通过song.conmments.all() 反向查询该歌曲的所有评论
         verbose_name="歌曲"
     )
     name = models.CharField(max_length=100, verbose_name="昵称")

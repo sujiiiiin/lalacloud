@@ -1,0 +1,57 @@
+/* 评论表单样式 */
+.comments-section .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+#id_name, #id_content {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s;
+}
+
+#id_name:focus, #id_content:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 评论列表样式 */
+.comments-list .card {
+    border-left: 3px solid #0d6efd;
+    transition: transform 0.2s;
+}
+
+.comments-list .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.comments-list .card-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.comments-list .card-text {
+    color: #444;
+    line-height: 1.6;
+}
+
+
+/* 歌词样式 */
+.lyrics-content {
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.lyrics-content p {
+    margin-bottom: 0.5rem;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.lyrics-content p:hover {
+    color: #0d6efd;
+}

@@ -177,7 +177,11 @@ D:.
 5. 管理员登陆的增删改查页面
    基于admin.py中的函数实现
    ![alt text](image-34.png)
-6. 
+6. 细节：使用font awesome添加特殊符号，结合bootstrap添加显示效果
+```html
+<!--白色音符元素-->
+<i class="fas fa-music fa-5x text-white"></i>
+```
 ## 数据分析报告
    ### 结论1：
    数据分析过程：从歌手简介中提取

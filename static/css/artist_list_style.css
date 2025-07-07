@@ -1,0 +1,187 @@
+
+    .hero-section {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 3rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .hero-section::after {
+        content: "";
+        position: absolute;
+        bottom: -30px;
+        left: -30px;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .stats-card {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* 随机推荐模态框样式 */
+    .random-artist-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .random-artist-modal.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .random-artist-card {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transform: translateY(20px);
+        transition: transform 0.4s ease;
+    }
+    
+    .random-artist-modal.show .random-artist-card {
+        transform: translateY(0);
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.3);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-close:hover {
+        background: rgba(0, 0, 0, 0.5);
+        transform: rotate(90deg);
+    }
+    
+    .random-artist-avatar {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
+    
+    .random-artist-content {
+        padding: 25px;
+        text-align: center;
+    }
+    
+    .random-artist-name {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .random-artist-description {
+        color: #666;
+        margin-bottom: 25px;
+        max-height: 100px;
+        overflow-y: auto;
+    }
+    
+    .random-artist-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    
+    .random-artist-btn {
+        padding: 10px 25px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-detail {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border: none;
+    }
+    
+    .btn-close-modal {
+        background: #f0f0f0;
+        color: #555;
+        border: 1px solid #ddd;
+    }
+    
+    .random-artist-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-detail:hover {
+        background: linear-gradient(135deg, #5a0db9 0%, #1c66e5 100%);
+        color: white;
+    }
+    
+    .btn-close-modal:hover {
+        background: #e0e0e0;
+    }
+    
+    /* 加载动画 */
+    .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 300px;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(106, 17, 203, 0.2);
+        border-top: 5px solid #6a11cb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }

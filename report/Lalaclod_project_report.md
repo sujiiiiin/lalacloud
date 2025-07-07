@@ -10,6 +10,9 @@ LaLacloud:基于django框架的网易云热门歌手歌曲展示网页搭建
 #### 实验人员
 杜亦清 计46 2024010792
 
+#### 代码仓库
+https://github.com/sujiiiiin/lalacloud
+
 #### 实验环境
 *   **操作系统:** Windows 10
 *   **Python 版本:** Python3.13.5
@@ -77,7 +80,8 @@ D:.
 
 ```
 #### 数据获取：pyCrawler
-选择网易云音乐平台，通过网易云提供的api路由（如："https://music.163.com/api/artist/top"），采用request+html解析的方式实现对top100热门歌手及其歌曲的爬取。爬取信息包含：歌曲名、歌手名、歌词、歌曲图片url、歌曲原始网站URL；歌手名、歌手图片、歌手简介、歌手原始网站URL。共爬取歌手**100位**，热门歌曲**2967首**。爬取的信息储存在sqlite数据库中，供后期利用django的ORM方法使用。
+选择网易云音乐平台，通过网易云提供的api路由（如："https://music.163.com/api/artist/top"）
+采用request+html解析的方式实现对top100热门歌手及其歌曲的爬取。爬取信息包含：歌曲名、歌手名、歌词、歌曲图片url、歌曲原始网站URL；歌手名、歌手图片、歌手简介、歌手原始网站URL。共爬取歌手**100位**，热门歌曲**2967首**。爬取的信息储存在sqlite数据库中，供后期利用django的ORM方法使用。
 #### 数据展示：html/css前端
 ```
 ├─templates
